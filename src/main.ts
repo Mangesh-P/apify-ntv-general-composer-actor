@@ -88,7 +88,7 @@ async function loopActorRun(lUrlsInfo: IUrlInfo[]) {
 async function startActorRun(lUrlsInfo: IUrlInfo[]): Promise<ActorRun | boolean> {
     let run: Promise<ActorRun> | null = null;
 
-    const updatedUrlsInfo = lUrlsInfo.map((info) => ({
+    const data = lUrlsInfo.map((info) => ({
         ...info,
         datasetId: dataset.id,
         keyValueStoreId: keyValueStore.id,
@@ -96,7 +96,7 @@ async function startActorRun(lUrlsInfo: IUrlInfo[]): Promise<ActorRun | boolean>
     }));
 
     run = Actor.start(actorID, {
-        ...{ urlsInfo: updatedUrlsInfo },
+        ...{ data },
     }, targetActorRunOptions);
     log.info('Starting lightbox actor run', { lUrlsInfo });
 
