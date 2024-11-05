@@ -6,7 +6,7 @@ export interface IInput {
     parallelRunsCount: number;
     targetActorRunOptions: ITargetActorRunOptions;
     userID: number;
-    urlsInfo: IUrlInfo[];
+    data: IData[];
     maxFileInZip: number;
     actorID: string;
     runInEachActor: number;
@@ -14,11 +14,11 @@ export interface IInput {
 
 export interface IState {
     parallelRunIds: string[];
-    urlsInfo: IUrlInfo[];
+    data: IData[];
     runningTasks: any[];
 }
 
-export interface IUrlInfo {
+export interface IData {
     url: string;
     filename: string;
     fullFilePath: string;

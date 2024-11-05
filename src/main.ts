@@ -1,7 +1,7 @@
 import { Actor, ActorRun, log } from 'apify';
 
 import { saveError } from './utils.js';
-import { IInput, IState, ITargetActorRunOptions, IUrlInfo } from './interface.js';
+import { IInput, IState, ITargetActorRunOptions, IData } from './interface.js';
 
 await Actor.init();
 
@@ -11,7 +11,7 @@ const {
     userID,
     actorID,
     runInEachActor = 1,
-    urlsInfo = [] as IUrlInfo[],
+    data = [] as IData[],
 } = await Actor.getInput<IInput>() ?? {} as IInput;
 const { apifyClient } = Actor;
 
@@ -19,9 +19,9 @@ const { apifyClient } = Actor;
 const dataset = await Actor.openDataset();
 const keyValueStore = await Actor.openKeyValueStore();
 log.info('Store ID:', { storeId: keyValueStore.id });
-log.info('Starting run', { parallelRunsCount, urlsInfoCount: urlsInfo.length });
+log.info('Starting run', { parallelRunsCount });
 
-const state = await Actor.useState<IState>('actor-state', { parallelRunIds: [], urlsInfo: [], runningTasks: [] as ActorRun[] });
+const state = await Actor.useState<IState>('actor-state', { parallelRunIds: [], data: [], runningTasks: [] as ActorRun[] });
 
 try {
     log.info('actorID', { actorID });
@@ -45,18 +45,18 @@ async function startToFinish() {
         }
     });
 
-    await loopActorRun(urlsInfo);
+    await loopActorRun(data);
 
     log.info('All parallel runs finished');
 }
 
-async function loopActorRun(lUrlsInfo: IUrlInfo[]) {
-    state.urlsInfo = lUrlsInfo;
+async function loopActorRun(lUrlsInfo: IData[]) {
+    state.data = lUrlsInfo;
     log.info('Starting parallel runs', { parallelRunsCount });
 
     // Start initial tasks
-    for (let i = 0; i < parallelRunsCount && state.urlsInfo.length > 0; i++) {
-        const lInfo = state.urlsInfo.splice(0, runInEachActor);
+    for (let i = 0; i < parallelRunsCount && state.data.length > 0; i++) {
+        const lInfo = state.data.splice(0, runInEachActor);
         state.runningTasks.push(startActorRun(lInfo));
     }
 
@@ -78,17 +78,17 @@ async function loopActorRun(lUrlsInfo: IUrlInfo[]) {
             state.runningTasks.splice(taskIndex, 1);
         });
 
-        if (state.urlsInfo.length > 0) {
-            const lInfo = state.urlsInfo.splice(0, runInEachActor);
+        if (state.data.length > 0) {
+            const lInfo = state.data.splice(0, runInEachActor);
             state.runningTasks.push(startActorRun(lInfo));
         }
     }
 }
 
-async function startActorRun(lUrlsInfo: IUrlInfo[]): Promise<ActorRun | boolean> {
+async function startActorRun(lUrlsInfo: IData[]): Promise<ActorRun | boolean> {
     let run: Promise<ActorRun> | null = null;
 
-    const data = lUrlsInfo.map((info) => ({
+    const dataTemp = lUrlsInfo.map((info) => ({
         ...info,
         datasetId: dataset.id,
         keyValueStoreId: keyValueStore.id,
@@ -96,7 +96,7 @@ async function startActorRun(lUrlsInfo: IUrlInfo[]): Promise<ActorRun | boolean>
     }));
 
     run = Actor.start(actorID, {
-        ...{ data },
+        ...{ data: dataTemp },
     }, targetActorRunOptions);
     log.info('Starting lightbox actor run', { lUrlsInfo });
 
