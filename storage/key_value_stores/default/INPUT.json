@@ -1,0 +1,60 @@
+{
+	"urlsInfo": [
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "0.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "1.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "2.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "3.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "4.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "5.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "6.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "7.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "8.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "9.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "10.jpg"
+		},
+		{
+			"url": "http://screenshot.ntv.io/prod/pages/article.html?ntv_ccpvw=EKoCAAAAAAAAAAA7hYEATsIMA",
+			"filename": "11.jpg"
+		}
+	],
+	"targetActorRunOptions": {
+		"build": "latest",
+		"token": "apify_api_i0cwa2u2ZlygxFYwiBgg1SpE7rPeNU1M1nfO"
+	},
+	"actorID": "nativo/apify-ntv-actor-simple-screenshot",
+	"parallelRunsCount": 5,
+	"userID": 7575,
+	"runInEachActor": 5
+}
