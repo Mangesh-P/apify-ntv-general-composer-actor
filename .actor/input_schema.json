@@ -1,0 +1,44 @@
+{
+    "title": "PlaywrightCrawler Template",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "urlsInfo": {
+            "title": "Start URLs",
+            "type": "array",
+            "description": "Url info :{url,filename,fullFilePath,selector}",
+            "editor": "json"
+        },
+        "runInEachActor": {
+            "title": "Processes/Threads to Run in each Actor",
+            "type": "integer",
+            "description": "How many processes/threads to run in each actor. This is useful for running multiple instances of the same actor.",
+            "default": 1
+        },
+        "parallelRunsCount": {
+            "title": "Parallel Actor runs count",
+            "type": "integer",
+            "description": "Number of parallel runs of this composer actor.",
+            "default": 10
+        },
+        "userID": {
+            "title": "userID",
+            "type": "integer",
+            "description": "The ID of the user",
+            "editor": "number"
+        },
+        "targetActorRunOptions": {
+            "title": "Actor Run Options",
+            "type": "object",
+            "description": "Options for the any Actor to run { build: 'latest'/'develop'/'release' , token: 'token' }",
+            "editor": "json",
+            "prefill": {}
+        },
+        "actorID": {
+            "title": "actorID",
+            "type": "string",
+            "description": "The actorID to run eg nativo/apify-ntv-actor-simple-screenshot",
+            "editor": "textfield"
+        }
+    }
+}
