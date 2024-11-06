@@ -25,7 +25,7 @@ const { apifyClient } = Actor;
 const dataset = await Actor.openDataset();
 const keyValueStore = await Actor.openKeyValueStore();
 log.info('Store ID:', { storeId: keyValueStore.id });
-log.info('Starting run', { parallelRunsCount });
+log.info('original Settings', { runInEachActor, parallelRunsCount });
 
 const state = await Actor.useState<IState>('actor-state', {
     parallelRunIds: [],
