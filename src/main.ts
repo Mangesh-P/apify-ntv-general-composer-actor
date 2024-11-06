@@ -8,10 +8,7 @@ await Actor.init();
 const input = await Actor.getInput<IInput>() ?? {} as IInput;
 
 const {
-    targetActorRunOptions = {
-        build: 'latest',
-        token: '',
-    } as ITargetActorRunOptions,
+    targetActorRunOptions = {} as ITargetActorRunOptions,
     userID,
     actorID,
     data = [] as IData[],
