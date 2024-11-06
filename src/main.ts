@@ -24,8 +24,11 @@ const { apifyClient } = Actor;
 // Get the current run request queue and dataset, we use the default ones.
 const dataset = await Actor.openDataset();
 const keyValueStore = await Actor.openKeyValueStore();
+
 log.info('Store ID:', { storeId: keyValueStore.id });
-log.info('original Settings', { runInEachActor, parallelRunsCount });
+log.info('Original Settings', { runInEachActor, parallelRunsCount });
+log.info('actorID', { actorID });
+log.info('targetActorRunOptions', targetActorRunOptions);
 
 const state = await Actor.useState<IState>('actor-state', {
     parallelRunIds: [],
@@ -40,9 +43,6 @@ const state = await Actor.useState<IState>('actor-state', {
 }));
 
 try {
-    log.info('actorID', { actorID });
-    log.info('targetActorRunOptions', targetActorRunOptions);
-
     await startToFinish();
 } catch (error: any) {
     await saveError(error);
@@ -68,7 +68,6 @@ async function startToFinish() {
 
 async function loopActorRun(lUrlsInfo: IData[]) {
     state.data = lUrlsInfo;
-    log.info('Starting parallel runs', { parallelRunsCount });
 
     // Start initial tasks
     if (parallelRunsCount) {
