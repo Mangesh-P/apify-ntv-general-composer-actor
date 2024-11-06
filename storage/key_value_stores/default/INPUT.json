@@ -54,7 +54,5 @@
 		"token": "apify_api_i0cwa2u2ZlygxFYwiBgg1SpE7rPeNU1M1nfO"
 	},
 	"actorID": "nativo/apify-ntv-actor-simple-screenshot",
-	"parallelRunsCount": 5,
-	"userID": 7575,
-	"runInEachActor": 5
+	"userID": 7575
 }

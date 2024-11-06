@@ -1,18 +1,24 @@
 import { Actor, ActorRun, log } from 'apify';
-
 import { saveError } from './utils.js';
 import { IInput, IState, ITargetActorRunOptions, IData } from './interface.js';
+import { overrideSettingsByActor } from './override.settings.js';
 
 await Actor.init();
 
+const input = await Actor.getInput<IInput>() ?? {} as IInput;
+
 const {
-    parallelRunsCount = 10,
-    targetActorRunOptions = { build: 'latest', token: '' } as ITargetActorRunOptions,
+    targetActorRunOptions = {
+        build: 'latest',
+        token: '',
+    } as ITargetActorRunOptions,
     userID,
     actorID,
-    runInEachActor = 1,
     data = [] as IData[],
-} = await Actor.getInput<IInput>() ?? {} as IInput;
+} = input;
+
+let { runInEachActor, parallelRunsCount } = input;
+
 const { apifyClient } = Actor;
 
 // Get the current run request queue and dataset, we use the default ones.
@@ -21,7 +27,17 @@ const keyValueStore = await Actor.openKeyValueStore();
 log.info('Store ID:', { storeId: keyValueStore.id });
 log.info('Starting run', { parallelRunsCount });
 
-const state = await Actor.useState<IState>('actor-state', { parallelRunIds: [], data: [], runningTasks: [] as ActorRun[] });
+const state = await Actor.useState<IState>('actor-state', {
+    parallelRunIds: [],
+    data: [],
+    runningTasks: [] as ActorRun[],
+});
+
+({ runInEachActor, parallelRunsCount } = overrideSettingsByActor({
+    actorID,
+    runInEachActor,
+    parallelRunsCount,
+}));
 
 try {
     log.info('actorID', { actorID });
@@ -55,28 +71,39 @@ async function loopActorRun(lUrlsInfo: IData[]) {
     log.info('Starting parallel runs', { parallelRunsCount });
 
     // Start initial tasks
-    for (let i = 0; i < parallelRunsCount && state.data.length > 0; i++) {
-        const lInfo = state.data.splice(0, runInEachActor);
-        state.runningTasks.push(startActorRun(lInfo));
+    if (parallelRunsCount) {
+        for (let i = 0; i < parallelRunsCount && state.data.length > 0; i++) {
+            const lInfo = state.data.splice(0, runInEachActor);
+            state.runningTasks.push(startActorRun(lInfo));
+        }
     }
 
     while (state.runningTasks.length > 0) {
-        const taskIndex = await Promise.race(state.runningTasks.map(async (task, index) => {
-            if (task instanceof Promise) {
-                return await task.then(() => index).catch((error: any) => {
-                    log.error('Task failed', { error });
-                    return -1;
+        const taskIndex = await Promise.race(
+            state.runningTasks.map(async (task, index) => {
+                if (task instanceof Promise) {
+                    return await task
+                        .then(() => index)
+                        .catch((error: any) => {
+                            log.error('Task failed', { error });
+                            return -1;
+                        });
+                }
+                return index;
+            }),
+        );
+        await state.runningTasks[taskIndex]
+            .then((run: ActorRun) => {
+                log.info(`Task finished with ID :`, {
+                    id: run?.id,
+                    status: run?.status,
                 });
-            }
-            return index;
-        }));
-        await state.runningTasks[taskIndex].then((run: ActorRun) => {
-            log.info(`Task finished with ID :`, { id: run?.id, status: run?.status });
-            state.runningTasks.splice(taskIndex, 1);
-        }).catch((error: any) => {
-            log.error('Task failed', { error });
-            state.runningTasks.splice(taskIndex, 1);
-        });
+                state.runningTasks.splice(taskIndex, 1);
+            })
+            .catch((error: any) => {
+                log.error('Task failed', { error });
+                state.runningTasks.splice(taskIndex, 1);
+            });
 
         if (state.data.length > 0) {
             const lInfo = state.data.splice(0, runInEachActor);
@@ -95,15 +122,21 @@ async function startActorRun(lUrlsInfo: IData[]): Promise<ActorRun | boolean> {
         userID,
     }));
 
-    run = Actor.start(actorID, {
-        ...{ data: dataTemp },
-    }, targetActorRunOptions);
+    run = Actor.start(
+        actorID,
+        {
+            ...{ data: dataTemp },
+        },
+        targetActorRunOptions,
+    );
     log.info('Starting lightbox actor run', { lUrlsInfo });
 
     if (run !== null) {
         const runResult = await run;
 
-        log.info(`Started parallel run with ID: ${runResult.id}`, { build: runResult.options.build });
+        log.info(`Started parallel run with ID: ${runResult.id}`, {
+            build: runResult.options.build,
+        });
 
         state.parallelRunIds.push(runResult.id);
 

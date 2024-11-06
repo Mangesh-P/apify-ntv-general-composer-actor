@@ -2,14 +2,16 @@ export interface ITargetActorRunOptions {
     token: string;
     build: string;
 }
-export interface IInput {
-    parallelRunsCount: number;
-    targetActorRunOptions: ITargetActorRunOptions;
+export interface IInput extends ISettings {
     userID: number;
     data: IData[];
-    maxFileInZip: number;
+}
+
+export interface ISettings {
     actorID: string;
-    runInEachActor: number;
+    runInEachActor?: number;
+    targetActorRunOptions?: ITargetActorRunOptions;
+    parallelRunsCount?: number;
 }
 
 export interface IState {
